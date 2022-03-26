@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link
+    rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👀</text></svg>"
+  />
+  <link rel="stylesheet" href="./style.css">
+  <title>Intersection Observer</title>
+</head>
+<body>
+  <header>Keep scrolling!</header>
+
+  <main>
+    <div id="box1"></div>
+    <div id="box2"></div>
+    <div id="box3"></div>
+    <div id="box4"></div>
+    <div id="box5"></div>
+    <div id="box6"></div>
+  </main>
+
+  <script>
+    let showPercentage = false
+    let visibleBox = null
+    const header = document.querySelector('header')
+
+    const io = new IntersectionObserver(entries => {
+      for (let entry of entries) {
+
+        // Prevent showing the percentage on initial load, when all the boxes
+        // are not visible yet.
+        if (entry.isIntersecting) {
+          showPercentage = true
+        }
+
+        // Log the entry only once, when the box enters the viewport.
+        if (visibleBox !== entry.target.id && entry.isIntersecting) {
+          visibleBox = entry.target.id
+          console.log(entry)
+        }
+
+        if (showPercentage) {
+          const percentage = Math.round(entry.intersectionRatio * 100)
+          header.textContent = `${entry.target.id} visible in ${percentage}%`
+        }
+      }
+    }, {
+      rootMargin: '-132px 0px 0px 0px',
+      threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+    })
+
+    document.querySelectorAll('div').forEach(box => io.observe(box))
+  </script>
+</body>
+</html>
